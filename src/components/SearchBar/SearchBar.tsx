@@ -27,7 +27,7 @@ const SearchBar: FC<Props> = ({ onSearch }) => {
     <div className='flex flex-col'>
       <div className='flex h-12'>
         <input
-          className='w-[70vw] px-3 rounded-lg rounded-r-none'
+          className='w-[70vw] tablet:max-w-md px-3 rounded-lg rounded-r-none'
           type="text" 
           name="input" 
           placeholder='Search for any IP address or domain'

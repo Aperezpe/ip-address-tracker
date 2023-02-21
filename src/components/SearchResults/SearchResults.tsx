@@ -22,7 +22,7 @@ const SearchResults: FC<IPProps> = ({ ipData }) => {
   })
 
   return (
-    <div className='bg-white w-[85vw] py-2 tablet:py-6 px-1 shadow-lg rounded-lg absolute -bottom-[0] translate-y-[55%] flex flex-col items-center z-20 tablet:flex-row'>
+    <div className='bg-white w-[85vw] tablet:max-w-6xl py-2 tablet:py-6 px-1 shadow-lg rounded-lg absolute -bottom-[0] translate-y-[55%] flex flex-col items-center z-20 tablet:flex-row'>
       {jsxResults}
     </div>
   )
