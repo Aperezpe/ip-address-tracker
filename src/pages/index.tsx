@@ -5,48 +5,29 @@ import SearchResults from '@/components/SearchResults/SearchResults';
 import { IPData } from '../types/ipData';
 import { useState, FC, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-// import Map from '@/components/Map/Map';
+import { IPProps } from '@/types/IPProps';
+import { server } from '@/config';
 
-type Props = {
-  ipData: IPData;
-};
-
-const Home: FC<Props> = (props: Props) => {
+const Home: FC<IPProps> = (props: IPProps) => {
   const [ipData, setIpData] = useState(props.ipData);
-  const [lat, setLat] = useState(props.ipData.lat)
-  const [lng, setLng] = useState(props.ipData.lng)
 
   const searchIP = async (ip: string) => {
-    console.log(ip);
-    const res = await fetch(
-      `https://geo.ipify.org/api/v2/country,city?apiKey=at_jYSorhvdElfbm0E3FJvgq3ZEN1OTs&ipAddress=${ip}`
-    );
-    const data = await res.json();
-
-    const ipData: IPData = {
-      address: data.ip,
-      location: `${data.location.city}, ${data.location.country} ${data.location.postalCode}`,
-      timezone: `UTC ${data.location.timezone}`,
-      isp: data.isp,
-      lat: data.location.lat,
-      lng: data.location.lng
-    };
-
-    setLat(data.location.lat)
-    setLng(data.location.lng);
-
-    console.log(ipData);
-
-    setIpData(ipData);
+      const data =  await fetch(`api/ip?ipAddress=${ip}`);
+      const ipData: IPData = await data.json();
+      setIpData(ipData);
   };
 
-  const Map = useMemo(() => dynamic(
-    () => import("@/components/Map/Map"), // replace '@components/map' with your component's location
-    { 
-      loading: () => <p>A map is loading</p>,
-      ssr: false // This line is important. It's what prevents server-side render
-    }
-  ), [/* list variables which should trigger a re-render here */])
+  const Map = useMemo(
+    () =>
+      dynamic(
+        () => import('@/components/Map/Map'), // replace '@components/map' with your component's location
+        {
+          loading: () => <p>A map is loading</p>,
+          ssr: false, // This line is important. It's what prevents server-side render
+        }
+      ),
+    []
+  );
 
   return (
     <>
@@ -57,7 +38,7 @@ const Home: FC<Props> = (props: Props) => {
         <link rel='icon' href='/favicon-32x32.png' />
       </Head>
       <main className='h-screen flex flex-col'>
-        <div className="flex flex-col items-center bg-[url('/pattern-bg.png')] h-56 bg-cover px-32 relative">
+        <div className="flex flex-col items-center bg-[url('/pattern-bg.png')] h-[35vh] tablet:h-60 bg-cover relative">
           <h1 className='text-white text-2xl py-6 font-semibold'>
             IP Address Tracker
           </h1>
@@ -65,27 +46,15 @@ const Home: FC<Props> = (props: Props) => {
           <SearchResults ipData={ipData}></SearchResults>
         </div>
 
-        <Map className='w-full flex-1 z-0' lat={lat} lng={lng} ></Map>
+        <Map ipData={ipData}></Map>
       </main>
     </>
   );
 };
 
-// / This gets called on every request
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  // Fetch data from external API
-  const res = await fetch(`https://geo.ipify.org/api/v2/country,city?apiKey=at_jYSorhvdElfbm0E3FJvgq3ZEN1OTs`)
-  const data = await res.json()
-
-  const ipData: IPData = {
-    address: data.ip,
-    location: `${data.location.city}, ${data.location.country} ${data.location.postalCode}`,
-    timezone: `UTC ${data.location.timezone}`,
-    isp: data.isp,
-    lat: data.location.lat,
-    lng: data.location.lng
-  };
-
+export const getServerSideProps: GetServerSideProps<IPProps> = async () => {
+  const data = await fetch(`${server}/api/ip`);
+  const ipData: IPData = await data.json();
   return { props: { ipData } };
 };
 
