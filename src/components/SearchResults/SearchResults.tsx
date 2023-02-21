@@ -11,7 +11,7 @@ const SearchResults: FC<IPProps> = ({ ipData }) => {
         <React.Fragment key={key}>
           <div className="flex-1 flex flex-col items-center tablet:items-start relative px-5 py-3 tablet:py-0">
             <p className='uppercase text-gray-500 text-xs font-semibold w-max'>{key}</p>
-            <p className='text-black font-bold text-base text-center'>{val}</p>
+            <p className='text-black font-bold text-base text-center tablet:text-left'>{val}</p>
           </div>
 
 
